@@ -22,6 +22,8 @@
  */
 int s_componentCounter = 0;
 
+int frames = 0;
+
 /**
  * @brief Main function of the programm
  *
@@ -33,7 +35,7 @@ int main()
 	util::Platform platform;
 	sf::RenderWindow window;
 	float screenScalingFactor = platform.getScreenScalingFactor(window.getSystemHandle());
-	window.create(sf::VideoMode(800.0f * screenScalingFactor, 800.0f * screenScalingFactor), "SGSE_Sim_OOP");
+	window.create(sf::VideoMode(800.0f * screenScalingFactor, 800.0f * screenScalingFactor), "SGSE_Sim_DOD");
 	window.setFramerateLimit(60);
 	platform.setIcon(window.getSystemHandle());
 
@@ -58,7 +60,7 @@ int main()
 		sprite->shape.setFillColor(sf::Color::White);
 		scene.Assign<Velocity>(id);
 		auto health = scene.Assign<Health>(id);
-		health->health = 10;
+		health->health = 3;
 	}
 
 	// Create used systems
@@ -81,15 +83,20 @@ int main()
 		window.clear();
 		float dt = deltaClock.restart().asMilliseconds();
 		// Update systems
-		movementSystem.update(scene, dt, world);
-		renderSystem.update(scene, dt, window);
 		kiSystem.update(scene, dt);
-		damageSystem.update(scene, dt);
-		healthSystem.update(scene, dt);
+		movementSystem.update(scene, dt, world);
 		collisionSystem.update(scene, dt);
+		damageSystem.update(scene, dt);
+		renderSystem.update(scene, dt, window);
+		healthSystem.update(scene, dt);
 		// Display window and print delta time
 		window.display();
-		std::cout << "Elapsed time: " << dt << std::endl;
+		std::cout << dt << std::endl;
+
+		if (frames++ >= 600)
+		{
+			window.close();
+		}
 	}
 
 	return 0;

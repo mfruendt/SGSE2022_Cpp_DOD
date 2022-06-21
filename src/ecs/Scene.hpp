@@ -99,13 +99,13 @@ struct Scene
 	void Remove(EntityID id)
 	{
 		// Ensures you're not accessing an entity that has been deleted
-		if (entities[GetEntityIndex(GetEntityIndex(id))].id != id)
+		if (entities[GetEntityIndex(id)].id != id)
 		{
 			return;
 		}
 
 		int componentId = GetId<T>();
-		entities[GetEntityIndex(GetEntityIndex(id))].mask.reset(componentId);
+		entities[GetEntityIndex(id)].mask.reset(componentId);
 	}
 
 	/**

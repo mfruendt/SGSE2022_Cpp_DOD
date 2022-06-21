@@ -21,21 +21,23 @@ struct CollisionSystem
 	void update(Scene& scene, float dt)
 	{
 		// Iterate over every entity
-		for (auto entity : SceneView<Position>(scene))
+		for (uint i = 0; i < scene.entities.size(); i++)
 		{
-			auto position = scene.Get<Position>(entity);
+			int compId = GetId<Position>();
 
-			// Iterate over every other entity
-			for (auto otherEntity : SceneView<Position>(scene, GetEntityIndex(entity)))
+			if (scene.entities.at(i).mask.test(compId))
 			{
-				auto otherPosition = scene.Get<Position>(otherEntity);
+				Position* position = static_cast<Position*>(scene.componentPools[compId]->get(i));
 
-				// If the entities are not the same and in the same position, add a collision component
-				if (entity != otherEntity)
+				// Iterate over every other entity
+				for (uint j = i + 1; j < scene.entities.size(); j++)
 				{
+					Position* otherPosition = static_cast<Position*>(scene.componentPools[compId]->get(j));
+
+					// If the entities are not the same and in the same position, add a collision component
 					if (position->x == otherPosition->x && position->y == otherPosition->y)
 					{
-						auto collision = scene.Assign<Collision>(entity);
+						auto collision = scene.Assign<Collision>(scene.entities.at(i).id);
 						collision->damage = 1;
 					}
 				}
